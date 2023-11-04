@@ -4,3 +4,4 @@ SITConfig*.json
 mod.js
 dist/
 *dynamicAssort.json
+node_modules/
