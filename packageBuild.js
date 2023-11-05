@@ -43,7 +43,7 @@ const exclude = glob.sync(`{${ignoreList.join(",")}}`, {
 });
 
 fs.copySync(__dirname, path.normalize(`${__dirname}/../~${modName}`), {
-  filter: (filePath: string) => {
+  filter: (filePath) => {
     return !exclude.includes(filePath);
   },
 });
