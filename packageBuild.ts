@@ -1,11 +1,12 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 // This is a simple script used to build a mod package. The script will copy necessary files to the build directory
 // and compress the build directory into a zip file that can be easily shared.
 
 const fs = require("fs-extra");
 const glob = require("glob");
-const zip = require('bestzip');
+const zip = require("bestzip");
 const path = require("path");
 
 // Load the package.json file to get some information about the package so we can name things appropriately. This is
