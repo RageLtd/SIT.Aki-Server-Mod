@@ -7,8 +7,8 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
-  release:
-    name: .NET on ${{ matrix.runs-on }} (${{ matrix.configuration }})
+  build:
+    name: NodeJS on ${{ matrix.runs-on }} (${{ matrix.configuration }})
     runs-on: ${{ matrix.runs-on }}
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
@@ -54,7 +54,7 @@ jobs:
           if-no-files-found: error
           
   publish:
-    needs: release
+    needs: build
     name: Publish
     runs-on: windows-latest
     steps:
