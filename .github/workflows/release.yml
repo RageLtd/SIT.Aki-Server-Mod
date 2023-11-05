@@ -1,35 +1,76 @@
+name: Publish
 on:
   push:
-    branches:
-      - 'master' 
+    branches:  [ master ]
 
-name: Create Release
+env:
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
-  build:
-    permissions: write-all
-    name: Create Release
-    runs-on: ubuntu-latest
+  release:
+    name: .NET on ${{ matrix.runs-on }} (${{ matrix.configuration }})
+    runs-on: ${{ matrix.runs-on }}
+    outputs:
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
     strategy:
+      fail-fast: true
       matrix:
-        node-version: [16.x]
+        runs-on: [ ubuntu-latest ]
+        configuration: [ Release ]
     steps:
-      - name: Checkout master Branch
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-          ref: 'master'
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          tag_name: ${{ github.event.repository.updated_at }}
-          release_name: ${{ github.event.repository.updated_at }}
-          draft: true
+          node-version: '21.x'
+
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Bump version
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dry_run: true
+          release_branches: master
+
+      - name: Build
+        id: build
+        run: npm run build
+
+      - name: Zip up dist for upblishing
+        run: 7z a -tzip Rage-SIT.Aki-Server-${{ steps.tag_version.outputs.new_tag }}.zip dist/*
+        
+      - name: Upload Files for Publishing
+        uses: actions/upload-artifact@v3
+        with:
+          name: Rage-SIT.Aki-Server-${{ steps.tag_version.outputs.new_tag }}
+          path: dist/*
+          if-no-files-found: error
+          
+  publish:
+    needs: release
+    name: Publish
+    runs-on: windows-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Rage-SIT.Aki-Server-${{ needs.release.outputs.new_tag }}
+          
+      - name: Publish to Github Releases
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ needs.release.outputs.new_tag }}
+          artifacts: Rage-SIT.Aki-Server-${{ needs.release.outputs.new_tag }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release ${{ needs.release.outputs.new_tag }}
+          body: ${{ needs.release.outputs.changelog }}
           prerelease: false
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm i
+          draft: false
+          allowUpdates: true
