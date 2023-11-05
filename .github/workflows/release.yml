@@ -41,16 +41,13 @@ jobs:
 
       - name: Build
         id: build
-        run: npm run build
-
-      - name: Zip up dist for upblishing
-        run: 7z a -tzip Rage-SIT.Aki-Server-${{ steps.tag_version.outputs.new_tag }}.zip dist/*
+        run: npm run build --name Rage-SIT.Aki-Server-${{ steps.tag_version.outputs.new_tag }}
         
       - name: Upload Files for Publishing
         uses: actions/upload-artifact@v3
         with:
           name: Rage-SIT.Aki-Server-${{ steps.tag_version.outputs.new_tag }}
-          path: dist/*
+          path: dist/Rage-SIT.Aki-Server-${{ steps.tag_version.outputs.new_tag }}.zip
           if-no-files-found: error
           
   publish:
