@@ -95,10 +95,10 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
     StayInTarkovMod.Instance = this;
     const logger = container.resolve<ILogger>("WinstonLogger");
     const dynamicRouterModService = container.resolve<DynamicRouterModService>(
-      "DynamicRouterModService"
+      "DynamicRouterModService",
     );
     const staticRouterModService = container.resolve<StaticRouterModService>(
-      "StaticRouterModService"
+      "StaticRouterModService",
     );
     this.saveServer = container.resolve<SaveServer>("SaveServer");
     CoopMatch.saveServer = this.saveServer;
@@ -117,7 +117,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
     this.sitConfig.routeHandler(container);
     this.webSocketHandler = new WebSocketHandler(
       this.coopConfig.webSocketPort,
-      logger
+      logger,
     );
     this.bundleLoader = container.resolve<BundleLoader>("BundleLoader");
     this.profileHelper = container.resolve<ProfileHelper>("ProfileHelper");
@@ -130,10 +130,10 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
   public preAkiLoad(container: tsyringe.DependencyContainer): void {
     const logger = container.resolve<ILogger>("WinstonLogger");
     const dynamicRouterModService = container.resolve<DynamicRouterModService>(
-      "DynamicRouterModService"
+      "DynamicRouterModService",
     );
     const staticRouterModService = container.resolve<StaticRouterModService>(
-      "StaticRouterModService"
+      "StaticRouterModService",
     );
     this.InitializeVariables(container);
 
@@ -144,14 +144,14 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
 
     this.externalIPFinder = new ExternalIPFinder(
       this.coopConfig,
-      this.httpConfig
+      this.httpConfig,
     );
 
     // ----------------------- Bundle Loader Fixes ------------------------------------------------
     const bundleLoaderFixed = new BundleLoaderFixed(
       container.resolve<VFS>("VFS"),
       container.resolve<JsonUtil>("JsonUtil"),
-      this.externalIPFinder
+      this.externalIPFinder,
     );
     bundleLoaderFixed.resolveAndOverride(container);
 
@@ -168,14 +168,14 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             output = JSON.stringify({});
             return output;
           },
         },
       ],
-      "aki"
+      "aki",
     );
 
     dynamicRouterModService.registerDynamicRouter(
@@ -197,7 +197,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
 
             output = JSON.stringify(spawnPoint);
             return output;
-          }
+          },
         ),
         new RouteAction(
           "/coop/server/friendlyAI",
@@ -215,10 +215,10 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
 
             output = JSON.stringify(friendlyAI);
             return output;
-          }
+          },
         ),
       ],
-      "aki"
+      "aki",
     );
 
     staticRouterModService.registerStaticRouter(
@@ -288,7 +288,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             let currentCoopMatch = CoopMatch.CoopMatches[info.serverId];
             if (currentCoopMatch !== undefined && currentCoopMatch !== null) {
               currentCoopMatch.endSession(
-                CoopMatchEndSessionMessages.HOST_SHUTDOWN_MESSAGE
+                CoopMatchEndSessionMessages.HOST_SHUTDOWN_MESSAGE,
               );
               delete CoopMatch.CoopMatches[info.serverId];
               currentCoopMatch = undefined;
@@ -349,7 +349,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
               coopMatch = CoopMatch.CoopMatches[cm];
             }
             logger.info(
-              coopMatch !== null ? "match exists" : "match doesn't exist!"
+              coopMatch !== null ? "match exists" : "match doesn't exist!",
             );
 
             output = JSON.stringify(
@@ -360,7 +360,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
                     sitVersion: coopMatch.SITVersion,
                     gameVersion: coopMatch.GameVersion,
                   }
-                : null
+                : null,
             );
             return output;
           },
@@ -370,7 +370,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
           action: (url, info, sessionId, output) => {
             let coopMatch: CoopMatch = CoopMatch.CoopMatches[info.serverId];
             logger.info(
-              coopMatch !== null ? "match exists" : "match doesn't exist!"
+              coopMatch !== null ? "match exists" : "match doesn't exist!",
             );
 
             if (coopMatch === null || coopMatch === undefined) {
@@ -402,7 +402,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
                     sitVersion: coopMatch.SITVersion,
                     gameVersion: coopMatch.GameVersion,
                   }
-                : null
+                : null,
             );
             return output;
           },
@@ -448,7 +448,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
               }
 
               console.error(
-                "/coop/server/update -- no info or serverId provided"
+                "/coop/server/update -- no info or serverId provided",
               );
               output = JSON.stringify({ response: "ERROR" });
               return JSON.stringify({ response: "ERROR" });
@@ -460,7 +460,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             let coopMatch = this.getCoopMatch(info.serverId);
             if (coopMatch == null || coopMatch == undefined) {
               console.error(
-                "/coop/server/update -- no coopMatch found to update"
+                "/coop/server/update -- no coopMatch found to update",
               );
 
               output = JSON.stringify({});
@@ -491,7 +491,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             logger.info("Getting Coop Server Invites");
             const obj = {
@@ -512,7 +512,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
           },
         },
       ],
-      "sit-coop"
+      "sit-coop",
       // "aki"
     );
 
@@ -526,7 +526,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             logger.info("/client/match/group/status");
             logger.info("Getting Coop Server Match Status");
@@ -580,7 +580,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             logger.info("exit_from_menu");
             output = JSON.stringify({});
@@ -593,7 +593,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             logger.info("exit_from_menu");
             output = JSON.stringify({});
@@ -606,7 +606,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             logger.info("Person has been Killed!");
             console.log(info);
@@ -620,7 +620,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             // logger.info("Person has been Killed!")
             console.log(info);
@@ -634,7 +634,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             console.log(url);
             console.log(info);
@@ -649,7 +649,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             console.log(url);
             console.log(info);
@@ -664,7 +664,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             console.log(url);
             console.log(info);
@@ -679,7 +679,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             url: string,
             info: any,
             sessionID: string,
-            output: string
+            output: string,
           ): any => {
             console.log(url);
             console.log(info);
@@ -689,7 +689,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
           },
         },
       ],
-      "aki"
+      "aki",
     );
 
     container.afterResolution(
@@ -702,12 +702,12 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
         result.getLocation = (
           url: string,
           info: IGetLocationRequestData,
-          sessionID: string
+          sessionID: string,
         ) => {
           // This is HACK to test out getting same loot on multiple clients
           if (this.locationData[info.locationId] === undefined) {
             console.log(
-              `No cached locationData found for ${info.locationId}. Creating it now!`
+              `No cached locationData found for ${info.locationId}. Creating it now!`,
             );
             this.generateNewLootForLocation(sessionID, info);
             this.locationData[info.locationId].Loot =
@@ -721,7 +721,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
           }
 
           return this.httpResponse.getBody(
-            this.locationData[info.locationId].Data
+            this.locationData[info.locationId].Data,
           );
         };
 
@@ -735,7 +735,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
 
         // }
       },
-      { frequency: "Always" }
+      { frequency: "Always" },
     );
 
     container.afterResolution(
@@ -747,14 +747,14 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
             // this.locationData2[location] = result.generate(name);
             this.locationData2[request.locationId] = result.get(
               sessionId,
-              request
+              request,
             );
           }
 
           return this.locationData2[request.locationId];
         };
       },
-      { frequency: "Always" }
+      { frequency: "Always" },
     );
 
     /**
@@ -779,17 +779,17 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
         result.handle = (
           sessionId: string,
           req: IncomingMessage,
-          resp: ServerResponse
+          resp: ServerResponse,
         ) => {
           return this.sitCustomHttpHandler.sitHttpHandler(
             sessionId,
             req,
             resp,
-            result
+            result,
           );
         };
       },
-      { frequency: "Always" }
+      { frequency: "Always" },
     );
 
     /**
@@ -804,20 +804,20 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
         };
         // The modifier Always makes sure this replacement method is ALWAYS replaced
       },
-      { frequency: "Always" }
+      { frequency: "Always" },
     );
   }
 
   public generateNewLootForLocation(
     sessionID: string,
-    request: IGetLocationRequestData
+    request: IGetLocationRequestData,
   ) {
     if (this.locationData[request.locationId] === undefined)
       this.locationData[request.locationId] = {};
 
     this.locationData[request.locationId].Data = this.locationController.get(
       sessionID,
-      request
+      request,
     );
 
     // const ownedCoopMatch = this.getCoopMatch(sessionID);
@@ -874,7 +874,7 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
   public getGameConfig(sessionID: string): IGameConfigResponse {
     const profile = this.profileHelper.getPmcProfile(sessionID);
 
-    let externalIp = this.externalIPFinder.resolveWebSocketUrl();
+    let externalIp = this.externalIPFinder.resolveExternalIP();
 
     const config: IGameConfigResponse = {
       languages: this.databaseServer.getTables().locales.languages,
@@ -892,11 +892,13 @@ export class StayInTarkovMod implements IPreAkiLoadMod, IPostDBLoadMod {
         Main: externalIp,
         RagFair: externalIp,
       },
-      webSocketUrl: CoopConfig.Instance.webSocketUrl,
+      webSocketUrl: this.externalIPFinder.resolveWebSocketUrl(),
       useProtobuf: false,
       utc_time: new Date().getTime() / 1000,
       totalInGame: profile.Stats?.Eft?.TotalInGameTime ?? 0,
     };
+
+    console.log(`Server config: ${JSON.stringify(config, null, 2)}`);
 
     return config;
   }
