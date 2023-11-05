@@ -5,3 +5,4 @@ mod.js
 dist/
 *dynamicAssort.json
 node_modules/
+src/**/*.js

@@ -116,12 +116,16 @@ export class SITCustomTraders implements IPreAkiLoadMod, IPostDBLoadMod
 
         // -------------------------------------------
         // Get Dynamic Assort Path
-        const traderDbPath = path.join( process.cwd(), "user", "cache", "SITCoop", traderId);
+        const traderDbPath = path.join(process.cwd(), traderId);
         if(!fs.existsSync(traderDbPath))
             fs.mkdirSync(traderDbPath, { recursive: true });
-        
+
         // Create dynamic assort file
-        const dynamicAssortFilePath = path.join(traderDbPath, "dynamicAssort.json");
+        const dynamicAssortFilePath = path.join(
+          traderDbPath,
+          traderId,
+          "dynamicAssort.json"
+        );
         if(!fs.existsSync(dynamicAssortFilePath)) {
             const defaultFile = JSON.stringify([], null, 4);
             fs.writeFileSync(dynamicAssortFilePath, defaultFile);
@@ -169,12 +173,16 @@ export class SITCustomTraders implements IPreAkiLoadMod, IPostDBLoadMod
 
         // -------------------------------------------
         // Get Dynamic Assort Path
-        const traderDbPath = path.join( process.cwd(), "user", "cache", "SITCoop", traderId);
+        const traderDbPath = path.join(process.cwd(), traderId);
         if(!fs.existsSync(traderDbPath))
             fs.mkdirSync(traderDbPath, { recursive: true });
 
         // Create dynamic assort file
-        const dynamicAssortFilePath = path.join(traderDbPath, "dynamicAssort.json");
+        const dynamicAssortFilePath = path.join(
+          traderDbPath,
+          traderId,
+          "dynamicAssort.json"
+        );
         if(!fs.existsSync(dynamicAssortFilePath)) {
             const defaultFile = JSON.stringify([], null, 4);
             fs.writeFileSync(dynamicAssortFilePath, defaultFile);

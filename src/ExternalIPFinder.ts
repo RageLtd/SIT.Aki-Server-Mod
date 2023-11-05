@@ -12,6 +12,7 @@ export class ExternalIPFinder {
     private httpConfig: any;
 
     private resolvedExternalIP: string;
+    private resolvedWebSocketUrl: string;
 
     constructor(coopConfig: CoopConfig.CoopConfig, httpConfig: any) {
 
@@ -101,13 +102,40 @@ export class ExternalIPFinder {
         // req.end();
     }
 
+    public resolveWebSocketUrl() {
+        if (this.resolvedWebSocketUrl !== undefined) {
+            return this.resolvedWebSocketUrl;
+        }
+
+        this.resolvedWebSocketUrl = `ws://${this.coopConfig.webSocketUrl}`;
+
+        if (!this.Found && this.coopConfig.useExternalIPFinder) {
+            console.warn("ExternalIPFinder has not found an IP. Using the config provided Address! " + this.resolvedWebSocketUrl);
+            return this.resolvedWebSocketUrl;
+        }
+
+        if(this.coopConfig.useExternalIPFinder) { 
+            console.log(`============================================================`);
+            console.log(`COOP: Auto-External-IP-Finder`);
+            if(this.IP === undefined || this.IP === undefined || this.IP == "undefined") {
+                this.IP = this.coopConfig.externalIP;
+                console.warn("ExternalIPFinder failed! Reverted back to ExternalIP in Config");
+            }
+            this.resolvedExternalIP = `${this.coopConfig.protocol}://` + this.IP + `:${this.httpConfig.port}`;
+            console.log(this.resolvedExternalIP);
+            console.log(`============================================================`);
+        }
+
+        return this.resolvedWebSocketUrl;
+    }
+
     public resolveExternalIP() : string {
 
         if(this.resolvedExternalIP !== undefined) {
             return this.resolvedExternalIP;
         }
 
-        this.resolvedExternalIP = `${this.coopConfig.protocol}://${this.coopConfig.externalIP}:${this.httpConfig.port}`;
+        this.resolvedExternalIP = `${this.coopConfig.protocol}://${this.coopConfig.externalIP}`;
 
         if(!this.Found && this.coopConfig.useExternalIPFinder) { 
             console.warn("ExternalIPFinder has not found an IP. Using the config provided Address! " + this.resolvedExternalIP);
