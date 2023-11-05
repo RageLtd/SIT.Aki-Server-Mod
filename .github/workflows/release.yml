@@ -61,16 +61,16 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          name: Rage-SIT.Aki-Server-${{ needs.release.outputs.new_tag }}
+          name: Rage-SIT.Aki-Server-${{ needs.build.outputs.new_tag }}
           
       - name: Publish to Github Releases
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ needs.release.outputs.new_tag }}
-          artifacts: Rage-SIT.Aki-Server-${{ needs.release.outputs.new_tag }}.zip
+          tag: ${{ needs.build.outputs.new_tag }}
+          artifacts: Rage-SIT.Aki-Server-${{ needs.build.outputs.new_tag }}.zip
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Release ${{ needs.release.outputs.new_tag }}
-          body: ${{ needs.release.outputs.changelog }}
+          name: Release ${{ needs.build.outputs.new_tag }}
+          body: ${{ needs.build.outputs.changelog }}
           prerelease: false
           draft: false
           allowUpdates: true
